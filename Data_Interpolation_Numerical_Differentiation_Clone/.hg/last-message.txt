@@ -1,0 +1,5 @@
+Got the SG filter working for two examples. It works very well for uniformly distributed 
+data sets. It can also be used with non-uniformly distributed data with a caveat on the 
+noise (error) associated with each data point. I've started writing a class to implement
+the SG filter for arbitrary data sets using my Array object to handle the data and file IO. 
+This class needs to be finished. 

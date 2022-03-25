@@ -1,0 +1,5 @@
+Program Exit Explanation
+
+Error occurred Thu Oct 09 14:15:09 2014
+
+input parameters not correctly defined in void savgol
