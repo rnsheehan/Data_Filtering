@@ -35,19 +35,19 @@ void testing::savitzky_golay_test_1()
 			sum += c[j];
 		}
 		std::cout << std::endl << std::endl << "M, nl, nr: ";
-		std::cout << m << " " << nl << " " << nr << std::endl;
+		std::cout << std::setw(7) << m << " " << nl << " " << nr << std::endl;
 		/*for(j=nl; j<5; j++){
 			cout<<"    ";
 		}*/
-		int count = 1;
+		int count = 0;
 		ord_c = std::vector<double>(np, 0);
-		for (j = nl + 1; j >= 1; j--) {
+		for (j = nl; j > 0; j--) {
 			std::cout << std::setw(7) << c[j];
 			//cout<<setw(7)<<j;
 			ord_c[count] = c[j];
 			count++;
 		}
-		for (j = 0; j < nr; j++) {
+		for (j = 1; j < nr; j++) {
 			std::cout << std::setw(7) << c[np - j];
 			//cout<<setw(7)<<np-j;
 			ord_c[count] = c[np - j];
@@ -69,17 +69,14 @@ void testing::savitzky_golay_test_1()
 	//double smoothed_val = 0.0;
 	//double val = valdata[indx];
 
-	///*for(int i = 1; i<=np; i++){
-	//	cout<<setw(7)<<ord_c[i];
-	//}*/
+	int count = 0;
 
-	//int count = 1;
-
-	//for (int n = -nl; n <= nr; n++) {
-	//	smoothed_val += ord_c[count] * valdata[indx + n];
-	//	cout << ord_c[count] << " , " << valdata[indx + n] << endl;
-	//	count++;
-	//}
+	for (int n = -nl; n <= nr; n++) {
+		//smoothed_val += ord_c[count] * valdata[indx + n];
+		//std::cout << ord_c[count] << " , " << valdata[indx + n] << endl;
+		std::cout << ord_c[count] << "\n";
+		count++;
+	}
 
 	//cout << endl << "actual value is " << val << endl;
 	//cout << "smoothed value is " << smoothed_val << endl << endl;

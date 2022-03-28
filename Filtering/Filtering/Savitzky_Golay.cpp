@@ -28,7 +28,7 @@ void sg_filter::savgol(std::vector<double>& c, int np, int nl, int nr, int ld, i
 	// => require FWHM < 1+nr+nl < 2*FWHM
 
 	try {
-		bool c1 = np > nl + nr + 1 ? true : false; 
+		bool c1 = np >= nl + nr + 1 ? true : false; 
 		bool c2 = nl > 0 ? true : false;
 		bool c3 = nr > 0 ? true : false;
 		bool c4 = ld < m ? true : false;
@@ -79,10 +79,12 @@ void sg_filter::savgol(std::vector<double>& c, int np, int nl, int nr, int ld, i
 		}
 		else {
 			std::string reason = "Error: void sg_filter::savgol()\n";
+			if (!c1)reason += ""; 
 			throw std::invalid_argument(reason);
 		}
 	}
 	catch (std::invalid_argument& e) {
-		std::cerr << e.what();
+		useful_funcs::exit_failure_output(e.what());
+		exit(EXIT_FAILURE);
 	}
 }

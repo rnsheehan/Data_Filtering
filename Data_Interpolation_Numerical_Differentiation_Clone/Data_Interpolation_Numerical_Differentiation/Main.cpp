@@ -122,7 +122,7 @@ void savitzky_golay_test()
 
 	cout<<"Sample Savitzky-Golay Coefficients"<<endl; 
 	cout<<fixed<<setprecision(3); 
-	for(i=0;i<1; i++){
+	for(i=0;i< 1; i++){
 		m = mtest[i];
 		nl = nltest[i]; 
 		nr = nrtest[i]; 

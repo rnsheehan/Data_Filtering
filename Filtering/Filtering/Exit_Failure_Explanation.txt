@@ -1,0 +1,6 @@
+Program Exit Explanation
+
+Error occurred: Mon Mar 28 16:54:31 2022
+
+Error: void sg_filter::savgol()
+
