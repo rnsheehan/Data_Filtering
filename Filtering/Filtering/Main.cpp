@@ -11,6 +11,7 @@
 int main()
 {
 
+	testing::savitzky_golay_test_1(); 
 
 	std::cout << "Press enter to close console\n";
 	std::cin.get();

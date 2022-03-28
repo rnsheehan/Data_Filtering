@@ -38,7 +38,7 @@ void sg_filter::savgol(std::vector<double>& c, int np, int nl, int nr, int ld, i
 		if (c10) {
 			int imj, ipj, k, kk, mm, mp1 = m + 1;
 			double fac, sum;
-			std::vector<double> b( mp1, 0);
+			std::vector<double> b(mp1, 0);
 			std::vector<std::vector<double>> a = vecut::zero_mat(mp1, mp1);
 
 			// set up normal equations for least squares fit
