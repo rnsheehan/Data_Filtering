@@ -27,11 +27,11 @@ int main()
 {
 	//interpolation_test(); 
 
-	//savitzky_golay_test();
+	savitzky_golay_test();
 	
 	//savitzky_golay_test_1();
 
-	savitzky_golay_test_2(); 
+	//savitzky_golay_test_2(); 
 
 	cout<<"Press enter to close\n"; 
 	cin.get(); 
