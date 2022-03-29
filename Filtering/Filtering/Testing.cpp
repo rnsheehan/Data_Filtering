@@ -19,7 +19,8 @@ void testing::savitzky_golay_test_1()
 	std::vector<double> c;
 	std::vector<double> ord_c;
 
-	ld = 0;
+	ld = 0; // coefficients sum to unity
+	//ld = 1; // coefficients sum to zero
 
 	std::cout << "Sample Savitzky-Golay Coefficients\n";
 	std::cout << std::fixed << std::setprecision(3);
