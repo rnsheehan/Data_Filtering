@@ -1,7 +1,0 @@
-Program Exit Explanation
-
-Error occurred: Tue Mar 29 13:35:15 2022
-
-Error: void sg_filter::savgol_coefficients()
-nl + nr < m
-

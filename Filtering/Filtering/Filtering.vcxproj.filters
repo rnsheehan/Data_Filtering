@@ -36,6 +36,12 @@
     <ClInclude Include="Savitzky_Golay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Probability_Functions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Random_Number_Generators.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Linear_Algebra.cpp">
@@ -54,6 +60,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Savitzky_Golay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Probability_Functions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Random_Number_Generators.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

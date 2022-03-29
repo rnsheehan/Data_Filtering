@@ -136,7 +136,7 @@ double sg_filter::savgol_value(std::vector<double>& c, int np, int nl, int nr, i
 		bool c4 = ld > -1 && ld < m ? true : false;
 		bool c5 = nl + nr > m ? true : false;
 		bool c6 = indx > -1 ? true : false; 
-		bool c8 = indx < static_cast<int>(f.size()) - 1 ? true : false; 
+		bool c8 = indx < static_cast<int>(f.size()) ? true : false; 
 		bool c7 = delta > 0.0 ? true : false; 
 		bool c9 = ld == 0 ? true : m > 3 ? true : false; // want poly order to be >= 4 when derivative is required
 		bool c10 = c1 && c2 && c3 && c4 && c5 && c6 && c7 && c8 && c9;
@@ -156,8 +156,7 @@ double sg_filter::savgol_value(std::vector<double>& c, int np, int nl, int nr, i
 				}
 			}
 
-			// Is this actually necessary? 
-			//if (ld > 0) g /= delta; // compute the value of the derivative
+			if (ld > 0) g /= delta; // compute the value of the derivative
 
 			return g; 
 		}
@@ -168,7 +167,7 @@ double sg_filter::savgol_value(std::vector<double>& c, int np, int nl, int nr, i
 			if (!c3) reason += "nr < -1\n";
 			if (!c4) reason += "ld < 0 || ld > m\n";
 			if (!c5) reason += "nl + nr < m\n";
-			if (!c6 || !c8) reason += "indx out of range\n";
+			if (!c6 || !c8) reason += "indx: " + template_funcs::toString(indx) + " out of range\n";
 			if (!c7) reason += "delta <= 0\n";
 			if (!c9) reason += "order of approximating polynomial not sufficiently high for derivative calculation\n"; 
 			throw std::invalid_argument(reason);

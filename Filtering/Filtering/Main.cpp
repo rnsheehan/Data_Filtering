@@ -11,7 +11,11 @@
 int main()
 {
 
-	testing::savitzky_golay_test_1(); 
+	//testing::savitzky_golay_test_1(); 
+
+	//testing::savitzky_golay_spectral_appr_test(); 
+
+	testing::savitzky_golay_ring_down_test(); 
 
 	std::cout << "Press enter to close console\n";
 	std::cin.get();

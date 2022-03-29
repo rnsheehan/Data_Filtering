@@ -141,6 +141,8 @@
   <ItemGroup>
     <ClInclude Include="Attach.h" />
     <ClInclude Include="Linear_Algebra.h" />
+    <ClInclude Include="Probability_Functions.h" />
+    <ClInclude Include="Random_Number_Generators.h" />
     <ClInclude Include="Savitzky_Golay.h" />
     <ClInclude Include="Templates.h" />
     <ClInclude Include="Testing.h" />
@@ -150,6 +152,8 @@
   <ItemGroup>
     <ClCompile Include="Linear_Algebra.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Probability_Functions.cpp" />
+    <ClCompile Include="Random_Number_Generators.cpp" />
     <ClCompile Include="Savitzky_Golay.cpp" />
     <ClCompile Include="Testing.cpp" />
     <ClCompile Include="Useful.cpp" />
