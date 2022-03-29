@@ -2,7 +2,7 @@
 #include "Attach.h"
 #endif
 
-void sg_filter::savgol(std::vector<double>& c, int np, int nl, int nr, int ld, int m)
+void sg_filter::savgol_coefficients(std::vector<double>& c, int np, int nl, int nr, int ld, int m)
 {
 	// Implementation of the Savitzky-Golay data smoothing filter
 	// This code is based on that given in NRinC, sect. 14.8
@@ -29,8 +29,8 @@ void sg_filter::savgol(std::vector<double>& c, int np, int nl, int nr, int ld, i
 
 	try {
 		bool c1 = np >= nl + nr + 1 ? true : false; 
-		bool c2 = nl > 0 ? true : false;
-		bool c3 = nr > 0 ? true : false;
+		bool c2 = nl > -1 ? true : false;
+		bool c3 = nr > -1 ? true : false;
 		bool c4 = ld < m ? true : false;
 		bool c5 = nl + nr > m ? true : false;
 		bool c10 = c1 && c2 && c3 && c4 && c5; 
@@ -78,8 +78,12 @@ void sg_filter::savgol(std::vector<double>& c, int np, int nl, int nr, int ld, i
 			}
 		}
 		else {
-			std::string reason = "Error: void sg_filter::savgol()\n";
-			if (!c1)reason += ""; 
+			std::string reason = "Error: void sg_filter::savgol_coefficients()\n";
+			if (!c1)reason += "np < nl + nr + 1\n"; 
+			if (!c2)reason += "nl < -1\n"; 
+			if (!c3)reason += "nr < -1\n"; 
+			if (!c4)reason += "ld < m\n"; 
+			if (!c5)reason += "nl + nr < m\n"; 
 			throw std::invalid_argument(reason);
 		}
 	}

@@ -1,6 +1,7 @@
 Program Exit Explanation
 
-Error occurred: Mon Mar 28 16:54:31 2022
+Error occurred: Tue Mar 29 09:54:47 2022
 
 Error: void sg_filter::savgol()
+nr < 0
 
