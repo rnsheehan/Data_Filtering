@@ -105,6 +105,7 @@ void testing::savitzky_golay_spectral_appr_test()
 
 	std::vector<double> xdata(npts, 0.0);
 	std::vector<double> ydata(npts, 0.0);
+	std::vector<double> ydatanoisy(npts, 0.0);
 
 	ngauss = 3; // no. of "spectral peaks" in data set
 	npars = 3 * ngauss; // size of array needed to specify parameters of each Gaussian "spectral peak"
@@ -117,7 +118,7 @@ void testing::savitzky_golay_spectral_appr_test()
 	a[6] = 9.0; a[7] = 17.0; a[8] = 0.5; // Gaussian 3
 
 	// populate the data set
-	spread = 0.1;
+	spread = 0.25;
 	xpos = xlow;
 	for (int i = 0; i < npts; i++) {
 
@@ -125,42 +126,94 @@ void testing::savitzky_golay_spectral_appr_test()
 
 		xdata[i] = xpos;
 
+		ydata[i] = yval;
+
 		yval *= rng::gasdev1(&idum, 1.0, template_funcs::DSQR(spread)); // add noise to the signal value
 
-		ydata[i] = yval;
+		ydatanoisy[i] = yval;
 
 		xpos += deltax;
 	}
 
-	// Compute the SG filter coefficients
+	// Compute the SG filter coefficients and the smoothing approximation for the same data set with different no. pts
 	int m, nl, nr, np, ld;
-	m = 4; // order of approximating polynomial in moving window
-	nl = nr = 4; // no. of points to the left / right of f_{i}
-	ld = 0; // tell code whether or not you're computing the derivative 
+	double ysmooth;
+	std::string filename; 
+	std::ofstream write; 
+	std::vector<double> c; 
+	m = 2; // order of approximating polynomial in moving window
+	nl = nr = 4; 
 	np = nl + nr + 1; 
-	std::vector<double> c(np, 0);
+	ld = 0; // tell code whether or not you're computing the derivative 
+	while (m < 7) {
 
-	sg_filter::savgol_coefficients(c, np, nl, nr, ld, m);
+		std::cout << "m, nl, nr, np: " << m << ", " << nl << ", " << nr << ", " << np << "\n";
 
-	// Apply the SG filter to the data set
-	// output the data for plotting
-	double ysmooth; 
-	
-	std::string filename = "SG_Filter_fgauss_m_" + template_funcs::toString(m) + 
-		"_ld_" + template_funcs::toString(ld) + 
-		"_nl_" + template_funcs::toString(nl) + 
-		"_nr_" + template_funcs::toString(nr) + dottxt; // name the file
-	
-	std::ofstream write(filename, std::ios_base::out, std::ios_base::trunc); // open the file for writing
-	
-																			 // perform the calculations
-	for (int i = 0; i < npts; i++) {
-		ysmooth = sg_filter::savgol_value(c, np, nl, nr, ld, m, ydata, i, deltax); 
+		c = std::vector<double>(np, 0);
 
-		write << std::setprecision(10) << xdata[i] << " , " << ydata[i] << " , " << ysmooth << "\n"; 
+		sg_filter::savgol_coefficients(c, np, nl, nr, ld, m);
+
+		// Apply the SG filter to the data set
+		// output the data for plotting
+		filename = "SG_Filter_fgauss_m_" + template_funcs::toString(m) +
+			"_ld_" + template_funcs::toString(ld) +
+			"_nl_" + template_funcs::toString(nl) +
+			"_nr_" + template_funcs::toString(nr) + dottxt; // name the file
+
+		write.open(filename, std::ios_base::out, std::ios_base::trunc); // open the file for writing
+
+		// perform the calculations
+		for (int i = 0; i < npts; i++) {
+
+			ysmooth = sg_filter::savgol_value(c, np, nl, nr, ld, m, ydatanoisy, i, deltax); // generate a smoothing polynomial for the same noisy data set each time
+
+			write << std::setprecision(10) << xdata[i] << " , " << ydata[i] << " , " << ydatanoisy[i] << " , " << ysmooth << "\n";
+		}
+
+		write.close(); // close the file
+
+		c.clear();
+
+		m += 2; 
+	}	
+
+	m = 4; // order of approximating polynomial in moving window
+	nl = 4;
+	ld = 0; // tell code whether or not you're computing the derivative 
+	while (nl < 65) {
+		nr = nl; // no. of points to the left / right of f_{i}		
+
+		np = nl + nr + 1;
+
+		std::cout << "m, nl, nr, np: " << m << ", " << nl << ", " << nr << ", " << np << "\n";
+
+		c = std::vector<double>(np, 0);
+
+		sg_filter::savgol_coefficients(c, np, nl, nr, ld, m);
+
+		// Apply the SG filter to the data set
+		// output the data for plotting
+		filename = "SG_Filter_fgauss_m_" + template_funcs::toString(m) +
+			"_ld_" + template_funcs::toString(ld) +
+			"_nl_" + template_funcs::toString(nl) +
+			"_nr_" + template_funcs::toString(nr) + dottxt; // name the file
+
+		write.open(filename, std::ios_base::out, std::ios_base::trunc); // open the file for writing
+
+		// perform the calculations
+		for (int i = 0; i < npts; i++) {
+
+			ysmooth = sg_filter::savgol_value(c, np, nl, nr, ld, m, ydatanoisy, i, deltax); // generate a smoothing polynomial for the same noisy data set each time
+
+			write << std::setprecision(10) << xdata[i] << " , " << ydata[i] << " , " << ydatanoisy[i] << " , " << ysmooth << "\n";
+		}
+
+		write.close(); // close the file
+
+		c.clear();
+
+		nl *= 2; // double no. pts used in each iteration		
 	}
-
-	write.close(); // close the file
 }
 
 void testing::ring_down(double t, double tstar, double A, double tau, double B, double* y, double* dy)
@@ -208,7 +261,9 @@ void testing::savitzky_golay_ring_down_test()
 
 	std::vector<double> xdata(npts, 0.0);
 	std::vector<double> ydata(npts, 0.0);
+	std::vector<double> ydatanoisy(npts, 0.0);
 	std::vector<double> dydata(npts, 0.0);
+	std::vector<double> dydatanoisy(npts, 0.0);
 
 	double tstar, A, tau, B; 
 	tstar = 20; 
@@ -223,46 +278,107 @@ void testing::savitzky_golay_ring_down_test()
 
 		ring_down(xpos, tstar, A, tau, B, &yval, &dyval); // evaluate the Ring-Down function
 
-		xdata[i] = xpos;
+		xdata[i] = xpos; ydata[i] = yval; dydata[i] = dyval;
 
 		yval *= rng::gasdev1(&idum, 1.0, template_funcs::DSQR(spread)); // add noise to the signal value
 		
 		dyval *= rng::gasdev1(&idum, 1.0, template_funcs::DSQR(spread)); // add noise to the signal value
 
-		ydata[i] = yval;
-
-		dydata[i] = dyval; 
+		ydatanoisy[i] = yval; dydatanoisy[i] = dyval;
 
 		xpos += deltax;
 	}
 
 	// Compute the SG filter coefficients
 	int m, nl, nr, np, ld;
-	m = 6; // order of approximating polynomial in moving window
-	nl = nr = 40; // no. of points to the left / right of f_{i}
-	ld = 0; // tell code whether or not you're computing the derivative 
-	np = nl + nr + 1;
-	std::vector<double> c(np, 0);
-
-	sg_filter::savgol_coefficients(c, np, nl, nr, ld, m);
-
-	// Apply the SG filter to the data set
-	// output the data for plotting
 	double ysmooth;
+	std::vector<double> c;
+	std::string filename; 
+	std::ofstream write; 	
 
-	std::string filename = "SG_Filter_ring_down_m_" + template_funcs::toString(m) +
-		"_ld_" + template_funcs::toString(ld) +
-		"_nl_" + template_funcs::toString(nl) +
-		"_nr_" + template_funcs::toString(nr) + dottxt; // name the file
+	ld = 1; // tell code whether or not you're computing the derivative 
 
-	std::ofstream write(filename, std::ios_base::out, std::ios_base::trunc); // open the file for writing
+	bool RUN_THIS_SECTION = false; 
 
-																			 // perform the calculations
-	for (int i = 0; i < npts; i++) {
-		ysmooth = sg_filter::savgol_value(c, np, nl, nr, ld, m, ydata, i, deltax);
+	if (RUN_THIS_SECTION) {
+		m = 4; // order of approximating polynomial in moving window
+		nl = nr = 10; // no. of points to the left / right of f_{i}
+		np = nl + nr + 1;
 
-		write << std::setprecision(10) << xdata[i] << " , " << ydata[i] << " , " << ysmooth << " , " << dydata[i] << "\n";
+		while (m < 11) {
+
+			std::cout << "m, nl, nr, np: " << m << ", " << nl << ", " << nr << ", " << np << "\n";
+
+			c = std::vector<double>(np, 0);
+
+			sg_filter::savgol_coefficients(c, np, nl, nr, ld, m);
+
+			// Apply the SG filter to the data set
+			// output the data for plotting
+			filename = "SG_Filter_ring_down_m_" + template_funcs::toString(m) +
+				"_ld_" + template_funcs::toString(ld) +
+				"_nl_" + template_funcs::toString(nl) +
+				"_nr_" + template_funcs::toString(nr) + dottxt; // name the file
+
+			write.open(filename, std::ios_base::out, std::ios_base::trunc); // open the file for writing
+
+			// perform the calculations
+			for (int i = 0; i < npts; i++) {
+				ysmooth = sg_filter::savgol_value(c, np, nl, nr, ld, m, ydatanoisy, i, deltax);
+
+				write << std::setprecision(10) << xdata[i] << " , " << ydata[i] << " , " << ydatanoisy[i] << " , " << ysmooth << ", " << dydata[i] << " , " << dydatanoisy[i] << "\n";
+			}
+
+			c.clear();
+
+			write.close(); // close the file
+
+			m += 2;
+		}
+
 	}
 
-	write.close(); // close the file
+	RUN_THIS_SECTION = true; 
+
+	if (RUN_THIS_SECTION) {
+
+		m = 10; // order of approximating polynomial in moving window
+		nl = nr = 8; // no. of points to the left / right of f_{i}
+		np = nl + nr + 1;
+
+		while (nl < 129) {
+			nr = nl;
+
+			np = nl + nr + 1;
+
+			std::cout << "m, nl, nr, np: " << m << ", " << nl << ", " << nr << ", " << np << "\n";
+
+			c = std::vector<double>(np, 0);
+
+			sg_filter::savgol_coefficients(c, np, nl, nr, ld, m);
+
+			// Apply the SG filter to the data set
+			// output the data for plotting
+			filename = "SG_Filter_ring_down_m_" + template_funcs::toString(m) +
+				"_ld_" + template_funcs::toString(ld) +
+				"_nl_" + template_funcs::toString(nl) +
+				"_nr_" + template_funcs::toString(nr) + dottxt; // name the file
+
+			write.open(filename, std::ios_base::out, std::ios_base::trunc); // open the file for writing
+
+			// perform the calculations
+			for (int i = 0; i < npts; i++) {
+				ysmooth = sg_filter::savgol_value(c, np, nl, nr, ld, m, ydatanoisy, i, deltax);
+
+				write << std::setprecision(10) << xdata[i] << " , " << ydata[i] << " , " << ydatanoisy[i] << " , " << ysmooth << ", " << dydata[i] << " , " << dydatanoisy[i] << "\n";
+			}
+
+			c.clear();
+
+			write.close(); // close the file
+
+			nl *= 2;
+		}
+
+	}
 }
